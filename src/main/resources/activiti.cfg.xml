@@ -13,7 +13,5 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 		<property name="jdbcPassword" value="root"/>
 		<property name="databaseSchemaUpdate" value="true"/>
 	</bean>
-
 	
-
 </beans>

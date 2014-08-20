@@ -1,7 +1,5 @@
 package com.llq.activiti;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import org.activiti.engine.ProcessEngine;
@@ -45,6 +43,7 @@ public class HelloWorld1 {
 		builder.addClasspathResource("HelloWorld.bpmn").addClasspathResource("HelloWorld.png");
 		//发布流程
 		builder.deploy();
+		
 	}
 	
 	//2.启动流程实例
@@ -57,7 +56,7 @@ public class HelloWorld1 {
 		RuntimeService runtimeService=processEngine.getRuntimeService();
 		//使用服务
 		runtimeService.startProcessInstanceByKey("myProcess");
-		 
+		
 	}
 	//3.查看任务
 	@Test
@@ -78,6 +77,7 @@ public class HelloWorld1 {
 			
 			System.out.println("Id:"+task.getId()+",name:"+task.getName()+",assignee:"+task.getAssignee()+",createTime:"+task.getCreateTime());
 		}
+
 		
 	}
 	//4.办理任务
@@ -90,5 +90,6 @@ public class HelloWorld1 {
 		//3.使用任务服务完成任务（提交任务）
 		String taskId="405";
 		taskService.complete(taskId);
+		
 	}
 }
