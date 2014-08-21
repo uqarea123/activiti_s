@@ -1,12 +1,17 @@
 package com.llq.activiti;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.repository.DeploymentBuilder;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.h2.constant.SysProperties;
 import org.junit.Test;
 
 
@@ -75,4 +80,42 @@ public class ProcessDefinitionTest {
 		//调用deploy方法发布流程
 		deploymentBuilder.deploy();
 	}
+	/**
+	 * 2.查看流程定义信息
+	 *     在项目中，我们主要和processDefinition打交道
+	 *     ProcessDefinition : 流程规则的整体信息（流程ID和版本）
+	 *         ID   {key}:{version}:{随机数}
+	 *         NAME : 对应流程文件上process节点的name属性
+	 *         KEY  : 对应流程文件上process节点的id属性
+	 *         VERSION : 发布时，查找当前系统中对应key的最高版本，如果找到了，在最高版本上”加1“，否则为1
+	 *     ActivityImpl      : 描述当前规则下每一个活动相关信息
+	 * 
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void queryProcessDefinition() throws Exception {
+		
+		//使用服务对象创建需要的查询对象
+		ProcessDefinitionQuery definitionQuery=repositoryService.createProcessDefinitionQuery();
+		//添加查询参数
+		definitionQuery
+		    .processDefinitionKey("LeaveFlow")
+//		    .processDefinitionName(processDefinitionName)
+//		                分页条件
+//		    .listPage(firstResult, maxResult)
+		    .orderByProcessDefinitionVersion().desc();
+		
+		//调用查询方法得到结果
+		List<ProcessDefinition> pds=definitionQuery.list();
+		//遍历结果
+		for(ProcessDefinition pd:pds){
+			System.out.println("id:"+pd.getId()+",name:"+pd.getName()+",key:"+pd.getKey()+",version:"+pd.getVersion());
+			 ProcessDefinitionImpl pdImpl=(ProcessDefinitionImpl) repositoryService.getProcessDefinition(pd.getId());
+			 System.out.println(pdImpl.getActivities());
+			 break;
+		}
+		
+	}
+	
 }
