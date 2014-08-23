@@ -1,5 +1,6 @@
 package com.llq.activiti;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -11,7 +12,7 @@ import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
-import org.h2.constant.SysProperties;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 
@@ -116,6 +117,40 @@ public class ProcessDefinitionTest {
 			 break;
 		}
 		
+	}
+	
+	//3.删除流程规则
+	@Test
+	public void deleteProcess() throws Exception {
+		String deploymentId="1";
+		//普通删除，如果当前规则下有正在执行的流程，则删除失败（保护）
+//		repositoryService.deleteDeployment(deploymentId);
+		//级联删除，相对比较暴力，会删除正在执行的流程信息和当前规则的所有历史，（一般不推荐开发给普通用户使用）
+		repositoryService.deleteDeployment(deploymentId, true);
+	}
+	//4.查看流程附件（查看流程图片）
+	@Test
+	public void queryImage() throws Exception {
+		//获取发布ID
+		String deploymentId="801";
+		//查找这次发布的所有资源文件名称
+		List<String> names=repositoryService.getDeploymentResourceNames(deploymentId);
+		String imageName=null;
+		for(String name:names){
+			//指定规则，获取需要的文件名称
+			if(name.indexOf(".png")>=0){
+				imageName=name;
+			}
+		}
+		System.out.println(imageName);
+		if(imageName!=null){
+			//通过文件名称去数据库中查询对应的输入流
+			InputStream inputStream=repositoryService.getResourceAsStream(deploymentId, imageName);
+			//把流写到本地文件中
+			File file=new File("d:/xx.png");
+			FileUtils.copyInputStreamToFile(inputStream, file);
+			
+		}
 	}
 	
 }
